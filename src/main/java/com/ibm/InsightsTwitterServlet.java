@@ -37,14 +37,14 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class TwitterServlet
  */
-@WebServlet(urlPatterns = {"/Twitter"}, asyncSupported = true)
-public class TwitterServlet extends HttpServlet {
+@WebServlet(urlPatterns = {"/Insights"}, asyncSupported = true)
+public class InsightsTwitterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public TwitterServlet() {
+    public InsightsTwitterServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -59,7 +59,7 @@ public class TwitterServlet extends HttpServlet {
 
 		AsyncContext ac = request.startAsync();
 		ScheduledThreadPoolExecutor executer = new ScheduledThreadPoolExecutor(5);
-		executer.execute(new TwitterAsyncService(ac));
+		executer.execute(new InsightsTwitterAsyncService(ac));
 	}
 
 	/**

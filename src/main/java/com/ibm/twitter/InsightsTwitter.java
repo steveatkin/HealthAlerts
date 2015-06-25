@@ -56,8 +56,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.json.java.JSONArray;
 import com.ibm.json.java.JSONObject;
 
-public class TwitterInsights {
-	private static final Logger logger = LoggerFactory.getLogger(TwitterInsights.class);
+public class InsightsTwitter {
+	private static final Logger logger = LoggerFactory.getLogger(InsightsTwitter.class);
 	private static String twitterService = "twitterinsights";
 	private static String baseURLTwitter = "";
 	private static String usernameTwitter = "";
@@ -109,7 +109,7 @@ public class TwitterInsights {
         return sysEnv;
     }
 
-	public TwitterInsights() {
+	public InsightsTwitter() {
 
 	}
 

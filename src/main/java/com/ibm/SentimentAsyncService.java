@@ -36,7 +36,7 @@ import javax.servlet.AsyncContext;
 
 import com.ibm.json.java.JSONObject;
 import com.ibm.twitter.Sentiment;
-import com.ibm.twitter.TwitterInsights;
+import com.ibm.twitter.InsightsTwitter;
 
 public class SentimentAsyncService implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(SentimentAsyncService.class);
@@ -68,7 +68,7 @@ public class SentimentAsyncService implements Runnable {
 		
 		for(String condition : conditions) {
 			logger.info("Requested condition {} and location {}", condition, location);
-			TwitterInsights twitter = new TwitterInsights();
+			InsightsTwitter twitter = new InsightsTwitter();
 			
 			Sentiment sentiment = twitter.getSentimentCount(condition, location, "positive");
 			logger.info("Positive sentiment {}", sentiment.getCount());

@@ -294,7 +294,7 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
       
       var location = $('#locationList').val();
 
-      var source = new EventSource('Twitter?conditions=' + conditions + '&location=' + location +
+      var source = new EventSource('Insights?conditions=' + conditions + '&location=' + location +
       '&enable=' + enable);
 
       source.onmessage = function(event) {

@@ -37,14 +37,14 @@ import javax.servlet.AsyncContext;
 
 import com.ibm.json.java.JSONObject;
 import com.ibm.twitter.TweetMessage;
-import com.ibm.twitter.TwitterInsights;
+import com.ibm.twitter.InsightsTwitter;
 import com.ibm.watson.WatsonTranslate;
 
-public class TwitterAsyncService implements Runnable {
-	private static final Logger logger = LoggerFactory.getLogger(TwitterAsyncService.class);
+public class InsightsTwitterAsyncService implements Runnable {
+	private static final Logger logger = LoggerFactory.getLogger(InsightsTwitterAsyncService.class);
 	private AsyncContext ac;
 
-	public TwitterAsyncService(AsyncContext context) {
+	public InsightsTwitterAsyncService(AsyncContext context) {
 		this.ac = context;
 	}
 
@@ -78,7 +78,7 @@ public class TwitterAsyncService implements Runnable {
 		for(String condition : conditions) {
 			logger.debug("Requested condition {} and location {}", condition, location);
 
-			TwitterInsights twitter = new TwitterInsights();
+			InsightsTwitter twitter = new InsightsTwitter();
 			ArrayList<TweetMessage> tweetMessages = twitter.getTweetList(condition, location).getTweetList();
 
 			logger.debug("Current tweets {}", tweetMessages.toString());
