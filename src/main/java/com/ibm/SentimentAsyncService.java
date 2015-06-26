@@ -67,19 +67,19 @@ public class SentimentAsyncService implements Runnable {
 		}
 		
 		for(String condition : conditions) {
-			logger.info("Requested condition {} and location {}", condition, location);
+			logger.debug("Requested condition {} and location {}", condition, location);
 			InsightsTwitter twitter = new InsightsTwitter();
 			
 			Sentiment sentiment = twitter.getSentimentCount(condition, location, "positive");
-			logger.info("Positive sentiment {}", sentiment.getCount());
+			logger.debug("Positive sentiment {}", sentiment.getCount());
 			positiveCount += sentiment.getCount();
 			
 			sentiment = twitter.getSentimentCount(condition, location, "negative");
-			logger.info("Negative sentiment {}", sentiment.getCount());
+			logger.debug("Negative sentiment {}", sentiment.getCount());
 			negativeCount += sentiment.getCount();
 			
 			sentiment = twitter.getSentimentCount(condition, location, "neutral");
-			logger.info("Neutral sentiment {}", sentiment.getCount());
+			logger.debug("Neutral sentiment {}", sentiment.getCount());
 			neutralCount += sentiment.getCount();
 		}
 		
