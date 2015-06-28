@@ -55,43 +55,45 @@ public class TwitterAsyncService implements Runnable{
 
 	    
 	    for(String condition : conditions) {
-	    	logger.debug("Requested condition {} and location {}", condition, location);
-	    	Query query = new Query(condition + " " + location);
-	    	query.setResultType(Query.RECENT);
+	    	if(!condition.equals("")) {
+	    		logger.debug("Requested condition {} and location {}", condition, location);
+	    		Query query = new Query(condition + " " + location);
+	    		query.setResultType(Query.RECENT);
 	    	
-	    	Twitter twitter = TwitterFactory.getSingleton();
+	    		Twitter twitter = TwitterFactory.getSingleton();
 	    	
-	    	try {
-	    		// Just get the first page of results to avoid exceeding the Twitter rate limit
-	        	QueryResult result = twitter.search(query);
+	    		try {
+	    			// Just get the first page of results to avoid exceeding the Twitter rate limit
+	    			QueryResult result = twitter.search(query);
 	        	
-	        	List<Status> tweets = result.getTweets();
+	    			List<Status> tweets = result.getTweets();
 	        	
-	        	logger.debug("Current tweets {}", tweets.toString());
+	    			logger.debug("Current tweets {}", tweets.toString());
 	        	
-	        	for (Status tweetMessage : tweets) {
-	        		JSONObject json = new JSONObject();
-	        		JSONObject tweet = new JSONObject();
+	    			for (Status tweetMessage : tweets) {
+	    				JSONObject json = new JSONObject();
+	    				JSONObject tweet = new JSONObject();
 	        
-	        		json.put("screenName", tweetMessage.getUser().getScreenName());
+	    				json.put("screenName", tweetMessage.getUser().getScreenName());
 	        		
-	        		if(translate) {
-	        			tweet.put("message", translate(watson, tweetMessage.getText()));
-	        		}
-	        		else {
-	        			tweet.put("message", tweetMessage.getText());
-	        		}
+	    				if(translate) {
+	    					tweet.put("message", translate(watson, tweetMessage.getText()));
+	    				}
+	    				else {
+	    					tweet.put("message", tweetMessage.getText());
+	    				}
 	        		
-	        		tweet.put("date", dateFormatter.format(tweetMessage.getCreatedAt()));
-	        		json.put("tweet", tweet);
+	    				tweet.put("date", dateFormatter.format(tweetMessage.getCreatedAt()));
+	    				json.put("tweet", tweet);
 	        			
-	        		writer.write("data: " + json.toString() + "\n\n");
-	        		writer.flush();
-	        	}
+	    				writer.write("data: " + json.toString() + "\n\n");
+	    				writer.flush();
+	    			}
+	    		}
+	    		catch(TwitterException e) {
+	    			logger.error("Twitter Error {}",e.getMessage());
+	    		}
 	    	}
-	    	catch(TwitterException e) {
-	        	logger.error("Twitter Error {}",e.getMessage());
-	        }
 	    }
 	    writer.write("event: finished\n");
 		writer.write("data: \n\n");

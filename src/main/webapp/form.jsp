@@ -227,6 +227,48 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
     }
     return span;
   }
+  
+  function setupQuestionAnswer(IdNum) {
+  	// Remove all the entries from the table
+    var tableId = '#table-background' + IdNum;
+    
+    var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
+   	var healthAlert = JSON.parse(jsonData);
+   	var conditions = healthAlert.healthConditions;
+   	
+   	
+   	$(tableId).bootstrapTable({
+      	columns: [
+      		{
+      			field: "answer",
+      			title: "<%=res.getString("answer")%>"
+      		}
+      	]
+     });
+
+     $(tableId).bootstrapTable('load', []);
+   	
+   	
+   	// Just grab the first condition
+   	if(conditions.length >0) {
+   		var source = new EventSource('Question?condition=' + conditions[0].name);
+   		
+   		source.onmessage = function(event) {
+        	var answer = JSON.parse(event.data);
+        
+        	$(tableId).bootstrapTable('append', answer);
+      	};
+      	
+      	source.onerror = function(event) {
+      		alert('<%=res.getString("closed")%>');
+      	};
+
+      	source.addEventListener('finished', function(event) {
+      		source.close();
+      	},false);
+   	}
+    
+  }
 
   function setupAlerts(IdNum) {
   	// Remove all the entries from the table
@@ -259,10 +301,10 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
      
      
      for (var i = 0; i < conditions.length; ++i) {
-     	console.log(conditions[i]);
         $(tableId).bootstrapTable('append', conditions[i]);
      }
 
+	 setupQuestionAnswer(IdNum);
   }
 
 
@@ -280,6 +322,10 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
       		{
       			field: "tweet",
       			title: "<%=res.getString("message_table")%>"
+      		},
+      		{
+      			field: "date",
+      			title: "<%=res.getString("date")%>"
       		}
       	]
       });
@@ -294,7 +340,7 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
       
       var location = $('#locationList').val();
 
-      var source = new EventSource('Insights?conditions=' + conditions + '&location=' + location +
+      var source = new EventSource('Tweet?conditions=' + conditions + '&location=' + location +
       '&enable=' + enable);
 
       source.onmessage = function(event) {
@@ -302,7 +348,8 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
         
         $(tableId).bootstrapTable('append', [{
         		screenName: tweet.screenName,
-        		tweet: tweet.tweet.message}]);
+        		tweet: tweet.tweet.message,
+        		date: tweet.tweet.date}]);
       };
 
       source.onerror = function(event) {
@@ -462,6 +509,7 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
       				$newPanel.find("#badgeNegative").attr("id", "badgeNegative" + (i));
       				$newPanel.find("#table-tweets").attr("id", "table-tweets" + (i));
 					$newPanel.find("#table-conditions").attr("id", "table-conditions" + (i));
+					$newPanel.find("#table-background").attr("id", "table-background" + (i));
 
       				var value = JSON.stringify(data[i]);
         		    $newPanel.find('#accordion-item' + (i)).data('healthAlert', value);

@@ -44,14 +44,14 @@ import com.ibm.watson.WatsonTranslate;
  * Servlet implementation class TwitterServlet
  */
 @WebServlet(urlPatterns = {"/Watson"})
-public class WatsonServlet extends HttpServlet {
-	private static final Logger logger = LoggerFactory.getLogger(WatsonServlet.class);
+public class WatsonTranslateServlet extends HttpServlet {
+	private static final Logger logger = LoggerFactory.getLogger(WatsonTranslateServlet.class);
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public WatsonServlet() {
+    public WatsonTranslateServlet() {
         super();
         // TODO Auto-generated constructor stub
     }

@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import com.ibm.json.java.JSONArray;
 import com.ibm.json.java.JSONObject;
-import com.ibm.twitter.InsightsTwitter;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.NameValuePair;
@@ -46,7 +45,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicNameValuePair;
 
 public class WatsonTranslate {
-	private static final Logger logger = LoggerFactory.getLogger(InsightsTwitter.class);
+	private static final Logger logger = LoggerFactory.getLogger(WatsonTranslate.class);
 
 	private static String translationService = "machine_translation";
 	private static String baseURLTranslation = "";
