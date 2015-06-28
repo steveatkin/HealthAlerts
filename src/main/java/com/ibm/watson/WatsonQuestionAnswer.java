@@ -46,7 +46,7 @@ import org.apache.http.entity.ContentType;
 public class WatsonQuestionAnswer {
 	private static final Logger logger = LoggerFactory.getLogger(WatsonQuestionAnswer.class);
 
-	private static String questionService = "watson_question";
+	private static String questionService = "question_and_answer";
 	private static String baseURLQuestion = "";
 	private static String usernameQuestion = "";
 	private static String passwordQuestion = "";
