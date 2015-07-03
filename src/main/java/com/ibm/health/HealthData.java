@@ -41,7 +41,7 @@ import com.ibm.json.java.JSONObject;
 
 public class HealthData {
 	private static final Logger logger = LoggerFactory.getLogger(HealthData.class);
-	private static String alertsService = "Alerts v1 : Sandbox 556609270cf2ecce6225ec76 prod";
+	private static String alertsService = "Health Alerts v1 : Sandbox 556609270cf2ecce6225ec76 prod";
 	private static String baseURLAlerts = "";
 	private static String clientId = "";
 	private static String clientSecret = "";
