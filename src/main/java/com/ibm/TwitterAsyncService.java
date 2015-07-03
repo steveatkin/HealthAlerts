@@ -94,6 +94,8 @@ public class TwitterAsyncService implements Runnable{
 	    			logger.error("Twitter Error {}",e.getMessage());
 	    		}
 	    	}
+	    	// just process one condition
+	    	break;
 	    }
 	    writer.write("event: finished\n");
 		writer.write("data: \n\n");

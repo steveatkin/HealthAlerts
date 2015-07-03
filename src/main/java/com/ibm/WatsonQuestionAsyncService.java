@@ -53,18 +53,12 @@ public class WatsonQuestionAsyncService implements Runnable {
 		String healthCondition = ac.getRequest().getParameter("condition");
 		// Use the US English locale, because Watson Question Answer only supports English
 		ResourceBundle res = ResourceBundle.getBundle( "com.ibm.health", Locale.US);
-		String questionPattern = res.getString("question");	
+		String questionPattern = res.getString("what_is");	
 		
 		String questionText = MessageFormat.format(questionPattern, healthCondition);
-		
-
 		logger.debug("Requested question {}", questionText);
-
 		WatsonQuestionAnswer watson = new WatsonQuestionAnswer();
-		
-		List<Map<String,String>> answers = watson.getAnswers(questionText, "travel");
-		
-
+		List<Map<String,String>> answers = watson.getAnswers(questionText, "healthcare");
 		logger.debug("Identfied answers {}", answers.toString());
 
 		try {
@@ -74,11 +68,30 @@ public class WatsonQuestionAsyncService implements Runnable {
 			if(!answers.isEmpty()) {
 				JSONObject json = new JSONObject();
 				Map<String, String> answer = answers.get(0);
+				json.put("question", questionText);
 				json.put("answer", answer.get("text"));
 				
 				writer.write(("data: " + json.toString() + "\n\n"));
     			writer.flush();
 			}
+			
+			questionPattern = res.getString("how_prevent");
+			questionText = MessageFormat.format(questionPattern, healthCondition);
+			logger.debug("Requested question {}", questionText);
+			answers = watson.getAnswers(questionText, "healthcare");
+			logger.debug("Identfied answers {}", answers.toString());
+			
+			// Just grab the first answer in the list
+			if(!answers.isEmpty()) {
+				JSONObject json = new JSONObject();
+				Map<String, String> answer = answers.get(0);
+				json.put("question", questionText);
+				json.put("answer", answer.get("text"));
+							
+				writer.write(("data: " + json.toString() + "\n\n"));
+			    writer.flush();
+			}
+			
 			writer.write(("event: finished\n"));
 			writer.write(("data: \n\n"));
 			writer.flush();

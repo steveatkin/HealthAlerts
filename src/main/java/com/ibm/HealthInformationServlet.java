@@ -42,15 +42,15 @@ import com.ibm.health.HealthData;
 /**
  * Servlet implementation class TwitterServlet
  */
-@WebServlet(urlPatterns = {"/Locations"}, asyncSupported = true)
-public class LocationsServlet extends HttpServlet {
-	private static final Logger logger = LoggerFactory.getLogger(LocationsServlet.class);
+@WebServlet(urlPatterns = {"/Terms"}, asyncSupported = true)
+public class HealthInformationServlet extends HttpServlet {
+	private static final Logger logger = LoggerFactory.getLogger(HealthInformationServlet.class);
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LocationsServlet() {
+    public HealthInformationServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -62,20 +62,22 @@ public class LocationsServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		response.setContentType("text/json");
 		response.setCharacterEncoding("UTF-8");
-
+		
+		String condition = request.getParameter("condition");
+		
 		OutputStream stream = response.getOutputStream();
 		OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8");
 		
-		HealthData alerts = new HealthData();
+		HealthData information = new HealthData();
 		
 		try {
-			writer.write(alerts.getLocations());
+			writer.write(information.getHealthInformation(condition));
 			writer.flush();
 			writer.close();
 		}
 		catch (Exception e) {
-			logger.error("Locations could not be retrieved");
-			throw new IOException("Locations could not be retrieved");	
+			logger.error("Health information could not be retrieved");
+			throw new IOException("Health information could not be retrieved");	
 		}
 	}
 

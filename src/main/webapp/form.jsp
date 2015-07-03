@@ -240,6 +240,10 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
    	$(tableId).bootstrapTable({
       	columns: [
       		{
+      			field: "question",
+      			title: "<%=res.getString("question")%>"
+      		},
+      		{
       			field: "answer",
       			title: "<%=res.getString("answer")%>"
       		}
@@ -273,20 +277,16 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
   function setupAlerts(IdNum) {
   	// Remove all the entries from the table
     var tableId = '#table-conditions' + IdNum;
-
     var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
    	var healthAlert = JSON.parse(jsonData);
    	var conditions = healthAlert.healthConditions;
+
 
     $(tableId).bootstrapTable({
       	columns: [
       		{
       			field: "name",
       			title: "<%=res.getString("alert")%>"
-      		},
-      		{
-      			field: "relevance",
-      			title: "<%=res.getString("score")%>"
       		},
       		{
       			field: "type",
@@ -299,11 +299,10 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
 
      var enable = $('#translation').val();
      
-     
      for (var i = 0; i < conditions.length; ++i) {
         $(tableId).bootstrapTable('append', conditions[i]);
      }
-
+     
 	 setupQuestionAnswer(IdNum);
   }
 

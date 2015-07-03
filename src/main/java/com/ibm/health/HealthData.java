@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-package com.ibm.outbreak;
+package com.ibm.health;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -39,8 +39,8 @@ import org.apache.http.impl.client.HttpClients;
 import com.ibm.json.java.JSONArray;
 import com.ibm.json.java.JSONObject;
 
-public class Alerts {
-	private static final Logger logger = LoggerFactory.getLogger(Alerts.class);
+public class HealthData {
+	private static final Logger logger = LoggerFactory.getLogger(HealthData.class);
 	private static String alertsService = "Alerts v1 : Sandbox 556609270cf2ecce6225ec76 prod";
 	private static String baseURLAlerts = "";
 	private static String clientId = "";
@@ -92,7 +92,7 @@ public class Alerts {
         return sysEnv;
     }
 
-	public Alerts() {
+	public HealthData() {
 
 	}
 	
@@ -178,6 +178,87 @@ public class Alerts {
 
 		return result;
 	}
-
 	
+	public String getHealthInformation(String condition) {
+		
+		String result = "";
+
+		try {
+			CloseableHttpClient httpClient = HttpClients.createDefault();
+			    
+			URIBuilder builder = new URIBuilder(baseURLAlerts + "/terms");
+		    builder.setParameter("client_id", clientId)
+		    .setParameter("client_secret", clientSecret)
+		    .setParameter("condition", condition);
+			URI uri = builder.build();
+			
+			HttpGet httpGet = new HttpGet(uri);
+
+			httpGet.setHeader("Content-Type", "text/plain");
+			HttpResponse httpResponse = httpClient.execute(httpGet);
+
+			if (httpResponse.getStatusLine().getStatusCode() == 200) {
+				BufferedReader rd = new BufferedReader(
+				        new InputStreamReader(httpResponse.getEntity().getContent(), "UTF-8"));
+
+				StringBuilder everything = new StringBuilder();
+			    String line;
+			    while( (line = rd.readLine()) != null) {
+			       everything.append(line);
+			    }
+			    result =  everything.toString();
+			}
+			else {
+				logger.error("could not get health condition information {}", httpResponse.getStatusLine().getStatusCode());
+			}
+
+		}
+		catch(Exception e) {
+			logger.error("Health Information error: {}", e.getMessage());
+		}
+
+		return result;
+	}
+
+	public String getHealthNews(String condition, String location) {
+		
+		String result = "";
+
+		try {
+			CloseableHttpClient httpClient = HttpClients.createDefault();
+			    
+			URIBuilder builder = new URIBuilder(baseURLAlerts + "/news");
+		    builder.setParameter("client_id", clientId)
+		    .setParameter("client_secret", clientSecret)
+		    .setParameter("condition", condition)
+		    .setParameter("location", location);
+			URI uri = builder.build();
+			
+			HttpGet httpGet = new HttpGet(uri);
+
+			httpGet.setHeader("Content-Type", "text/plain");
+			HttpResponse httpResponse = httpClient.execute(httpGet);
+
+			if (httpResponse.getStatusLine().getStatusCode() == 200) {
+				BufferedReader rd = new BufferedReader(
+				        new InputStreamReader(httpResponse.getEntity().getContent(), "UTF-8"));
+
+				StringBuilder everything = new StringBuilder();
+			    String line;
+			    while( (line = rd.readLine()) != null) {
+			       everything.append(line);
+			    }
+			    result =  everything.toString();
+			}
+			else {
+				logger.error("could not get health condition news {}", httpResponse.getStatusLine().getStatusCode());
+			}
+
+		}
+		catch(Exception e) {
+			logger.error("Health News error: {}", e.getMessage());
+		}
+
+		return result;
+	}
 }

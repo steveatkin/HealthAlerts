@@ -37,20 +37,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ibm.outbreak.Alerts;
+import com.ibm.health.HealthData;
 
 /**
  * Servlet implementation class TwitterServlet
  */
 @WebServlet(urlPatterns = {"/Alerts"}, asyncSupported = true)
-public class AlertsServlet extends HttpServlet {
-	private static final Logger logger = LoggerFactory.getLogger(AlertsServlet.class);
+public class HealthAlertsServlet extends HttpServlet {
+	private static final Logger logger = LoggerFactory.getLogger(HealthAlertsServlet.class);
 	private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AlertsServlet() {
+    public HealthAlertsServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -77,7 +77,7 @@ public class AlertsServlet extends HttpServlet {
 		OutputStream stream = response.getOutputStream();
 		OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8");
 		
-		Alerts alerts = new Alerts();
+		HealthData alerts = new HealthData();
 		
 		try {
 			writer.write(alerts.getAlerts(location, hscore, lscore));
