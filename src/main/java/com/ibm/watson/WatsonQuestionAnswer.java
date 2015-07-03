@@ -102,26 +102,30 @@ public class WatsonQuestionAnswer {
 	
 	private List<Map<String,String>> formatAnswers(String resultJson) {
 		List<Map<String,String>> ret = new ArrayList<Map<String,String>>();
-		try {
-			JSONArray pipelines = JSONArray.parse(resultJson);
-			// the response has two pipelines, lets use the first one
-			JSONObject answersJson = (JSONObject) pipelines.get(0);
-			JSONArray answers = (JSONArray) ((JSONObject) answersJson.get("question")).get("evidencelist");
+		if(resultJson != null) {
+			try {
+				JSONArray pipelines = JSONArray.parse(resultJson);
+				// the response has two pipelines, lets use the first one
+				JSONObject answersJson = (JSONObject) pipelines.get(0);
+				JSONArray answers = (JSONArray) ((JSONObject) answersJson.get("question")).get("evidencelist");
 
-			for(int i = 0; i < answers.size();i++) {
-				JSONObject answer = (JSONObject) answers.get(i);
-				Map<String, String> map = new HashMap<String, String>();
+				for(int i = 0; i < answers.size();i++) {
+					JSONObject answer = (JSONObject) answers.get(i);
+					Map<String, String> map = new HashMap<String, String>();
 
-				double p = Double.parseDouble((String)answer.get("value"));
-				p = Math.floor(p * 100);
-				map.put("confidence",  Double.toString(p) + "%");
-				map.put("text", (String)answer.get("text"));
+					if(answer.get("value") != null) {
+						double p = Double.parseDouble((String)answer.get("value"));
+						p = Math.floor(p * 100);
+						map.put("confidence",  Double.toString(p) + "%");
+						map.put("text", (String)answer.get("text"));
 
-				ret.add(map);
+						ret.add(map);
+					}
+				}
+			} catch (IOException e) {
+				logger.error("Error parsing the response {} ", e.getMessage());
 			}
-		} catch (IOException e) {
-    	 logger.error("Error parsing the response {} ", e.getMessage());
-       }
+		}
 		return ret;
 	}
 
@@ -137,6 +141,7 @@ public class WatsonQuestionAnswer {
 		JSONObject postData = new JSONObject();
     	postData.put("question",questionJson);
 		
+    	logger.debug("Watson question: {}", questionText);
 		
 		try {
 			Executor executor = Executor.newInstance();
@@ -152,7 +157,6 @@ public class WatsonQuestionAnswer {
 			answers = formatAnswers(answersJson);
 			}
 			catch(Exception e) {
-				System.out.println(answers);
 				logger.error("Watson question error: {}", e.getMessage());
 			}
 		

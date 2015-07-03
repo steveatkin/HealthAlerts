@@ -150,11 +150,26 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
                       </div>
                     </div>
                   
+                    <div class="row-fluid">
+                  	<div class="col-md-12 column-white">
+                        <span class="label label-primary"><%=res.getString("medline")%></span>
+                             <table data-toggle="table" class="table" id="table-medline">
+                        </table>
+                      </div>
+                    </div>
                   
                   	<div class="row-fluid">
                   	<div class="col-md-12 column-white">
                         <span class="label label-primary"><%=res.getString("background")%></span>
                              <table data-toggle="table" class="table" id="table-background">
+                        </table>
+                      </div>
+                    </div>
+                    
+                    <div class="row-fluid">
+                  	<div class="col-md-12 column-white">
+                        <span class="label label-primary"><%=res.getString("news")%></span>
+                             <table data-toggle="table" class="table" id="table-news">
                         </table>
                       </div>
                     </div>
@@ -302,8 +317,88 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
      for (var i = 0; i < conditions.length; ++i) {
         $(tableId).bootstrapTable('append', conditions[i]);
      }
+  }
+  
+  function setupMedline(IdNum) {
+  	// Remove all the entries from the table
+    var tableId = '#table-medline' + IdNum;
+    var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
+   	var healthAlert = JSON.parse(jsonData);
+   	var conditions = healthAlert.healthConditions;
+
+
+    $(tableId).bootstrapTable({
+      	columns: [
+      		{
+      			field: "name",
+      			title: "<%=res.getString("type")%>"
+      		},
+      		{
+      			field: "value",
+      			title: "<%=res.getString("value")%>"
+      		}
+      	]
+     });
+
+     $(tableId).bootstrapTable('load', []);
      
-	 setupQuestionAnswer(IdNum);
+     $.ajax({
+        	url: 'Terms',
+      		type: 'GET',
+      		data: {condition: conditions[0].name},
+        	success: function(data) {
+        		$(tableId).bootstrapTable('append', data);
+        	},
+        	error: function(xhr) {
+        		console.log('<%=res.getString("connect_error")%>');
+        	},
+        	dataType: 'json',
+        	timeout: 100000,
+      	});
+     
+  }
+
+  function setupNews(IdNum) {
+  	// Remove all the entries from the table
+    var tableId = '#table-news' + IdNum;
+    var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
+   	var healthAlert = JSON.parse(jsonData);
+   	var conditions = healthAlert.healthConditions;
+
+    $(tableId).bootstrapTable({
+      	columns: [
+      		{
+      			field: "title",
+      			title: "<%=res.getString("title")%>"
+      		},
+      		{
+      			field: "author",
+      			title: "<%=res.getString("author")%>"
+      		}
+      	]
+     });
+
+     $(tableId).bootstrapTable('load', []);
+     
+     var location = $('#locationList').val();
+     
+     $.ajax({
+        	url: 'News',
+      		type: 'GET',
+      		data: {condition: conditions[0].name,
+      			  location: location},
+        	success: function(data) {
+        	    for (var i = 0; i < data.length; ++i) {
+        			$(tableId).bootstrapTable('append', data[i]);
+     			}
+        	},
+        	error: function(xhr) {
+        		console.log('<%=res.getString("connect_error")%>');
+        	},
+        	dataType: 'json',
+        	timeout: 100000,
+      	});
+     
   }
 
 
@@ -422,6 +517,9 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
       setupAlerts(IdNum);
       setupTwitterEventSource(IdNum);
       setupSentimentEventSource(IdNum);
+      setupMedline(IdNum);
+      setupNews(IdNum);
+      setupQuestionAnswer(IdNum);
     });
 
     // Initialize the select picker list
@@ -508,6 +606,8 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
       				$newPanel.find("#badgeNegative").attr("id", "badgeNegative" + (i));
       				$newPanel.find("#table-tweets").attr("id", "table-tweets" + (i));
 					$newPanel.find("#table-conditions").attr("id", "table-conditions" + (i));
+					$newPanel.find("#table-news").attr("id", "table-news" + (i));
+					$newPanel.find("#table-medline").attr("id", "table-medline" + (i));
 					$newPanel.find("#table-background").attr("id", "table-background" + (i));
 
       				var value = JSON.stringify(data[i]);

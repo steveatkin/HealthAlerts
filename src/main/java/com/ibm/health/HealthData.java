@@ -223,7 +223,9 @@ public class HealthData {
 	public String getHealthNews(String condition, String location) {
 		
 		String result = "";
-
+		
+		logger.debug("Looking for {} in {}", condition, location);
+		
 		try {
 			CloseableHttpClient httpClient = HttpClients.createDefault();
 			    
@@ -258,7 +260,9 @@ public class HealthData {
 		catch(Exception e) {
 			logger.error("Health News error: {}", e.getMessage());
 		}
-
+		
+		logger.debug("found {}", result);
+		
 		return result;
 	}
 }
