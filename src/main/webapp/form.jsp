@@ -231,6 +231,10 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
   </script>
 
   <script>
+  
+  function linkFormatter(value, row, index) {
+  	return '<a target="_blank" href="' + value + '">' + value + '</a>';
+  }
 
   function polarityFormatter(value) {
   	var span = "";
@@ -372,8 +376,9 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
       			title: "<%=res.getString("title")%>"
       		},
       		{
-      			field: "author",
-      			title: "<%=res.getString("author")%>"
+      			field: "url",
+      			title: "<%=res.getString("url")%>",
+      			formatter: linkFormatter
       		}
       	]
      });
@@ -430,11 +435,13 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
 
       var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
       var healthAlert = JSON.parse(jsonData);
-      var conditions = (healthAlert.healthConditions.map(function(a) {return a.name;})).join(',');
+      //var conditions = (healthAlert.healthConditions.map(function(a) {return a.name;})).join(',');
+      var conditions = healthAlert.healthConditions;
+      
       
       var location = $('#locationList').val();
 
-      var source = new EventSource('Tweet?conditions=' + conditions + '&location=' + location +
+      var source = new EventSource('Tweet?conditions=' + conditions[0] + '&location=' + location +
       '&enable=' + enable);
 
       source.onmessage = function(event) {
