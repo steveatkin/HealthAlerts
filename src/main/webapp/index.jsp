@@ -39,7 +39,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
 /*
 ServiceAccount account = ServiceAccount.getInstance();
 Control control = CloudResourceBundleControl.getInstance(account, ResourceBundle.Control.TTL_DONT_CACHE);
-ResourceBundle res = ResourceBundle.getBundle("com.ibm.trains", request.getLocale(), control);
+ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocale(), control);
 */
 %>
 

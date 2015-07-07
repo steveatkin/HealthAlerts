@@ -27,6 +27,7 @@ package com.ibm;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -37,7 +38,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.health.HealthData;
+import com.ibm.watson.WatsonTranslate;
+
 
 /**
  * Servlet implementation class TwitterServlet
@@ -47,6 +53,36 @@ public class HealthInformationServlet extends HttpServlet {
 	private static final Logger logger = LoggerFactory.getLogger(HealthInformationServlet.class);
 	private static final long serialVersionUID = 1L;
 
+	@JsonIgnoreProperties(ignoreUnknown=true)
+	private static class TermDefinition {
+		@JsonProperty("name")
+		private String name = "";
+		
+		@JsonProperty("value")
+		private String value = "";
+		
+		@JsonProperty("name")
+		public String getName() {
+			return name;
+		}
+		
+		@JsonProperty("value")
+		public String getValue() {
+			return value;
+		}
+		
+		@JsonProperty("name")
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		@JsonProperty("value")
+		public void setValue(String value) {
+			this.value = value;
+		}
+	}
+	
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -64,14 +100,24 @@ public class HealthInformationServlet extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		
 		String condition = request.getParameter("condition");
+		boolean translate = Boolean.parseBoolean(request.getParameter("enable"));
+		Locale locale = request.getLocale();
 		
 		OutputStream stream = response.getOutputStream();
 		OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8");
 		
 		HealthData information = new HealthData();
 		
+		ObjectMapper mapper = new ObjectMapper();
+	    TermDefinition definition = mapper.readValue(information.getHealthInformation(condition).replace("\n", ""), TermDefinition.class);
+		
+		if(translate) {
+			WatsonTranslate watson = new WatsonTranslate(locale);
+			definition.setValue(watson.translate(definition.getValue()));
+		}
+		
 		try {
-			writer.write(information.getHealthInformation(condition));
+			writer.write(mapper.writeValueAsString(definition));
 			writer.flush();
 			writer.close();
 		}

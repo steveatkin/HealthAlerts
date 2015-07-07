@@ -39,7 +39,7 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
 
 //ServiceAccount account = ServiceAccount.getInstance();
 //Control control = CloudResourceBundleControl.getInstance(account, ResourceBundle.Control.TTL_DONT_CACHE);
-//ResourceBundle res = ResourceBundle.getBundle("com.ibm.trains", request.getLocale(), control);
+//ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocale(), control);
 %>
 
 <!DOCTYPE html>
@@ -250,6 +250,7 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
   function setupQuestionAnswer(IdNum) {
   	// Remove all the entries from the table
     var tableId = '#table-background' + IdNum;
+    var enable = $('#translation').val();
     
     var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
    	var healthAlert = JSON.parse(jsonData);
@@ -274,7 +275,7 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
    	
    	// Just grab the first condition
    	if(conditions.length >0) {
-   		var source = new EventSource('Question?condition=' + conditions[0].name);
+   		var source = new EventSource('Question?condition=' + conditions[0].name + '&enable=' + enable);
    		
    		source.onmessage = function(event) {
         	var answer = JSON.parse(event.data);
@@ -328,6 +329,7 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
     var tableId = '#table-medline' + IdNum;
     var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
    	var healthAlert = JSON.parse(jsonData);
+   	var enable = $('#translation').val();
    	var conditions = healthAlert.healthConditions;
 
 
@@ -349,7 +351,8 @@ ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale
      $.ajax({
         	url: 'Terms',
       		type: 'GET',
-      		data: {condition: conditions[0].name},
+      		data: {condition: conditions[0].name,
+      			   enable: enable},
         	success: function(data) {
         		$(tableId).bootstrapTable('append', data);
         	},

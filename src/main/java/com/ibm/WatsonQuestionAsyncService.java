@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ibm.json.java.JSONObject;
 import com.ibm.watson.WatsonQuestionAnswer;
+import com.ibm.watson.WatsonTranslate;
 
 public class WatsonQuestionAsyncService implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(WatsonQuestionAsyncService.class);
@@ -51,14 +52,17 @@ public class WatsonQuestionAsyncService implements Runnable {
 	@Override
 	  public void run() {
 		String healthCondition = ac.getRequest().getParameter("condition");
+		boolean translate = Boolean.parseBoolean(ac.getRequest().getParameter("enable"));
+		Locale locale = ac.getRequest().getLocale();
+		
 		// Use the US English locale, because Watson Question Answer only supports English
 		ResourceBundle res = ResourceBundle.getBundle( "com.ibm.health", Locale.US);
 		String questionPattern = res.getString("what_is");	
 		
 		String questionText = MessageFormat.format(questionPattern, healthCondition);
 		logger.debug("Requested question {}", questionText);
-		WatsonQuestionAnswer watson = new WatsonQuestionAnswer();
-		List<Map<String,String>> answers = watson.getAnswers(questionText, "healthcare");
+		WatsonQuestionAnswer watsonQA = new WatsonQuestionAnswer();
+		List<Map<String,String>> answers = watsonQA.getAnswers(questionText, "healthcare");
 		logger.debug("Identfied answers {}", answers.toString());
 
 		try {
@@ -68,8 +72,16 @@ public class WatsonQuestionAsyncService implements Runnable {
 			if(!answers.isEmpty()) {
 				JSONObject json = new JSONObject();
 				Map<String, String> answer = answers.get(0);
-				json.put("question", questionText);
-				json.put("answer", answer.get("text"));
+				
+				if(translate) {
+					WatsonTranslate watson = new WatsonTranslate(locale);
+					json.put("question", watson.translate(questionText));
+					json.put("answer", watson.translate(answer.get("text")));
+				}
+				else {
+					json.put("question", questionText);
+					json.put("answer", answer.get("text"));
+				}
 				
 				writer.write(("data: " + json.toString() + "\n\n"));
     			writer.flush();
@@ -78,15 +90,23 @@ public class WatsonQuestionAsyncService implements Runnable {
 			questionPattern = res.getString("how_prevent");
 			questionText = MessageFormat.format(questionPattern, healthCondition);
 			logger.debug("Requested question {}", questionText);
-			answers = watson.getAnswers(questionText, "healthcare");
+			answers = watsonQA.getAnswers(questionText, "healthcare");
 			logger.debug("Identfied answers {}", answers.toString());
 			
 			// Just grab the first answer in the list
 			if(!answers.isEmpty()) {
 				JSONObject json = new JSONObject();
 				Map<String, String> answer = answers.get(0);
-				json.put("question", questionText);
-				json.put("answer", answer.get("text"));
+				
+				if(translate) {
+					WatsonTranslate watson = new WatsonTranslate(locale);
+					json.put("question", watson.translate(questionText));
+					json.put("answer", watson.translate(answer.get("text")));
+				}
+				else {
+					json.put("question", questionText);
+					json.put("answer", answer.get("text"));
+				}
 							
 				writer.write(("data: " + json.toString() + "\n\n"));
 			    writer.flush();

@@ -27,16 +27,12 @@ public class TwitterAsyncService implements Runnable{
 		this.ac = context;
 	}
 	
-	private String translate(WatsonTranslate watson, String message) {
-    	return watson.translate(message);
-    }
-
-
 	@Override
 	  public void run() {
 	    PrintWriter writer = null;
 	    String terms = ac.getRequest().getParameter("conditions");
 		String location = ac.getRequest().getParameter("location");
+		boolean translate = Boolean.parseBoolean(ac.getRequest().getParameter("enable"));
 		Locale locale = ac.getRequest().getLocale();
 		
 		DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
@@ -44,7 +40,6 @@ public class TwitterAsyncService implements Runnable{
 			
 		ArrayList<String> conditions = new ArrayList<String>(Arrays.asList(terms.split(",")));
 		
-		boolean translate = Boolean.parseBoolean(ac.getRequest().getParameter("enable"));
 
 	    try {
 	    	writer = ac.getResponse().getWriter();
@@ -77,7 +72,8 @@ public class TwitterAsyncService implements Runnable{
 	    				json.put("screenName", tweetMessage.getUser().getScreenName());
 	        		
 	    				if(translate) {
-	    					tweet.put("message", translate(watson, tweetMessage.getText()));
+	    					String message = watson.translate(tweetMessage.getText());
+	    					tweet.put("message", message);
 	    				}
 	    				else {
 	    					tweet.put("message", tweetMessage.getText());
