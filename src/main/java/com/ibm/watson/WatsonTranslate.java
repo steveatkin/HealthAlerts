@@ -24,10 +24,12 @@ THE SOFTWARE.
 
 package com.ibm.watson;
 
+import com.ibm.watson.developer_cloud.language_translation.v2.LanguageTranslation;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.Translation;
+import com.ibm.watson.developer_cloud.language_translation.v2.model.TranslationResult;
+
 import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -36,24 +38,15 @@ import org.slf4j.LoggerFactory;
 import com.ibm.json.java.JSONArray;
 import com.ibm.json.java.JSONObject;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.fluent.Executor;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicNameValuePair;
 
 public class WatsonTranslate {
 	private static final Logger logger = LoggerFactory.getLogger(WatsonTranslate.class);
 
-	private static String translationService = "machine_translation";
+	private static String translationService = "language_translation";
 	private static String baseURLTranslation = "";
 	private static String usernameTranslation = "";
 	private static String passwordTranslation = "";
-
-
-	private String watsonLangPair = null;
+	private String targetLang = "";
 
 	static {
 		processVCAP_Services();
@@ -108,45 +101,32 @@ public class WatsonTranslate {
 		// see if this is a supported language for Watson translate
 
 		if(isoLang.equalsIgnoreCase("es")) {
-			watsonLangPair = "mt-enus-eses";
+			targetLang = "es";
 		}
 		else if (isoLang.equalsIgnoreCase("fr")) {
-			watsonLangPair = "mt-enus-frfr";
+			targetLang = "fr";
 		}
 		else if(bcp47Tag.equalsIgnoreCase("pt-BR")) {
-			watsonLangPair = "mt-enus-ptbr";
+			targetLang = "pt";
 		}
 	}
 
 	public String translate(String text) {
-		String tweetTranslation = text;
-
-		if(watsonLangPair != null && text != null && !text.equals("")) {
-			List<NameValuePair> qparams = new ArrayList<NameValuePair>();
-			qparams.add(new BasicNameValuePair("txt",text));
-			qparams.add(new BasicNameValuePair("sid",watsonLangPair));
-			qparams.add(new BasicNameValuePair("rt","text"));
-
-			try {
-				Executor executor = Executor.newInstance();
-	    		URI serviceURI = new URI(baseURLTranslation).normalize();
-	    	    String auth = usernameTranslation + ":" + passwordTranslation;
-	    	    byte[] response = executor.execute(Request.Post(serviceURI)
-				    .addHeader("Authorization", "Basic "+ Base64.encodeBase64String(auth.getBytes()))
-				    .bodyString(URLEncodedUtils.format(qparams, "utf-8"),
-				    		ContentType.APPLICATION_FORM_URLENCODED)
-				    .connectTimeout(15 * 1000)
-				    ).returnContent().asBytes();
-
-	    	    tweetTranslation = new String(response, "UTF-8");
-	    	    logger.debug("Translated {} to {}", text, tweetTranslation);
+		String translatedText = text;
+		
+		if(text != null && !text.equals("") && !targetLang.equals("")) {
+			LanguageTranslation service = new LanguageTranslation();
+			service.setUsernameAndPassword(usernameTranslation, passwordTranslation);
+			TranslationResult translationResult = service.translate(text, "en", targetLang);
+		
+			Iterator<Translation> itr = translationResult.getTranslations().iterator();
+			while(itr.hasNext()) {
+				translatedText = itr.next().getTranslation();
 			}
-			catch(Exception e) {
-				logger.error("Watson error: {} on text: {}", e.getMessage(), text);
-			}
+			
 		}
 
-		return tweetTranslation;
+		return translatedText;
 	}
 
 }
