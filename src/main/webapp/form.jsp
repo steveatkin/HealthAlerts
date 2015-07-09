@@ -33,6 +33,7 @@ THE SOFTWARE.
 <%@ page import="com.ibm.gaas.ServiceAccount" %>
 <%@ page import="com.ibm.gaas.CloudResourceBundleControl" %>
 <%@ page import="com.ibm.globalization.Globalization" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 
 <%
 //ResourceBundle res=ResourceBundle.getBundle( "com.ibm.health", request.getLocale());
@@ -284,7 +285,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
       	};
       	
       	source.onerror = function(event) {
-      		alert('<%=res.getString("closed")%>');
+      		alert('<%=StringEscapeUtils.escapeJavaScript(res.getString("closed"))%>');
       	};
 
       	source.addEventListener('finished', function(event) {
@@ -357,7 +358,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
         		$(tableId).bootstrapTable('append', data);
         	},
         	error: function(xhr) {
-        		console.log('<%=res.getString("connect_error")%>');
+        		console.log('<%=StringEscapeUtils.escapeJavaScript(res.getString("connect_error"))%>');
         	},
         	dataType: 'json',
         	timeout: 100000,
@@ -401,7 +402,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
      			}
         	},
         	error: function(xhr) {
-        		console.log('<%=res.getString("connect_error")%>');
+        		console.log('<%=StringEscapeUtils.escapeJavaScript(res.getString("connect_error"))%>');
         	},
         	dataType: 'json',
         	timeout: 100000,
@@ -457,7 +458,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
       };
 
       source.onerror = function(event) {
-      	alert('<%=res.getString("closed")%>');
+      	alert('<%=StringEscapeUtils.escapeJavaScript(res.getString("closed"))%>');
       };
 
       source.addEventListener('finished', function(event) {
@@ -465,7 +466,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
       },false);
 
       } else {
-      	alert('<%=res.getString("sse_error")%>');
+      	alert('<%=StringEscapeUtils.escapeJavaScript(res.getString("sse_error"))%>');
     }
     return false;
   }
@@ -493,14 +494,14 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
       };
 
       source.onerror = function(event) {
-      	alert('<%=res.getString("closed")%>');
+      	alert('<%=StringEscapeUtils.escapeJavaScript(res.getString("closed"))%>');
       };
 
       source.addEventListener('finished', function(event) {
         source.close();
       }, false);
     } else {
-      alert('<%=res.getString("sse_error")%>');
+      alert('<%=StringEscapeUtils.escapeJavaScript(res.getString("sse_error"))%>');
     }
     return false;
   }
@@ -509,7 +510,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
   // Load the translated string to show in the table when there is no data
   $.extend($.fn.bootstrapTable.defaults, {
   	formatNoMatches: function() {
-            return '<%=res.getString("no_data")%>';
+            return '<%=StringEscapeUtils.escapeJavaScript(res.getString("no_data"))%>';
         }
     });
 
@@ -555,7 +556,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
         		$('#accordion').show();
         	},
         	error: function(xhr) {
-        		alert('<%=res.getString("connect_error")%>');
+        		alert('<%=StringEscapeUtils.escapeJavaScript(res.getString("connect_error"))%>');
         	},
         	complete: function() {
         		// Hide the loading gif
@@ -629,7 +630,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
         		$('#accordion').show();
         	},
         	error: function(xhr) {
-        		alert('<%=res.getString("connect_error")%>');
+        		alert('<%=StringEscapeUtils.escapeJavaScript(res.getString("connect_error"))%>');
         	},
         	complete: function() {
         		// Hide the loading gif
