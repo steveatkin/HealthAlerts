@@ -35,12 +35,12 @@ THE SOFTWARE.
 
 
 <%
-ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocale());
-/*
+//ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocale());
+
 ServiceAccount account = ServiceAccount.getInstance();
 Control control = CloudResourceBundleControl.getInstance(account, ResourceBundle.Control.TTL_DONT_CACHE);
 ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocale(), control);
-*/
+
 %>
 
 <!DOCTYPE html>
