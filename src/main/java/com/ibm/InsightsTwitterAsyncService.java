@@ -27,7 +27,6 @@ package com.ibm;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -56,10 +55,8 @@ public class InsightsTwitterAsyncService implements Runnable {
 
 	@Override
 	  public void run() {
-		String terms = ac.getRequest().getParameter("conditions");
+		String term = ac.getRequest().getParameter("condition");
 		String location = ac.getRequest().getParameter("location");
-		
-		ArrayList<String> conditions = new ArrayList<String>(Arrays.asList(terms.split(",")));
 		
 		boolean translate = Boolean.parseBoolean(ac.getRequest().getParameter("enable"));
 
@@ -75,11 +72,11 @@ public class InsightsTwitterAsyncService implements Runnable {
 		Locale locale = ac.getRequest().getLocale();
 		WatsonTranslate watson = new WatsonTranslate(locale);
 		
-		for(String condition : conditions) {
-			logger.debug("Requested condition {} and location {}", condition, location);
+		if(!term.equals("") && !location.equals("")) {
+			logger.debug("Requested condition {} and location {}", term, location);
 
 			InsightsTwitter twitter = new InsightsTwitter();
-			ArrayList<TweetMessage> tweetMessages = twitter.getTweetList(condition, location).getTweetList();
+			ArrayList<TweetMessage> tweetMessages = twitter.getTweetList(term, location).getTweetList();
 
 			logger.debug("Current tweets {}", tweetMessages.toString());
 

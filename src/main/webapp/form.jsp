@@ -439,13 +439,11 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
 
       var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
       var healthAlert = JSON.parse(jsonData);
-      //var conditions = (healthAlert.healthConditions.map(function(a) {return a.name;})).join(',');
       var conditions = healthAlert.healthConditions;
-      
-      
       var location = $('#locationList').val();
 
-      var source = new EventSource('Tweet?conditions=' + conditions[0] + '&location=' + location +
+      // collect tweets for the first health condition
+      var source = new EventSource('Tweet?condition=' + conditions[0].name + '&location=' + location +
       '&enable=' + enable);
 
       source.onmessage = function(event) {
@@ -476,11 +474,11 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
     if (typeof(EventSource) !== 'undefined') {
       var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
       var healthAlert = JSON.parse(jsonData);
-      var conditions = (healthAlert.healthConditions.map(function(a) {return a.name;})).join(',');
+      var conditions = healthAlert.healthConditions;
 
 	  var location = $('#locationList').val();
 
-      var source = new EventSource('Sentiment?conditions=' + conditions + '&location=' + location);
+      var source = new EventSource('Sentiment?condition=' + conditions[0].name + '&location=' + location);
 
       source.onmessage = function(event) {
         var sentiment = JSON.parse(event.data);

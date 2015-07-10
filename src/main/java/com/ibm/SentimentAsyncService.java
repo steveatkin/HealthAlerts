@@ -26,8 +26,6 @@ package com.ibm;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,14 +46,13 @@ public class SentimentAsyncService implements Runnable {
 
 	@Override
 	  public void run() {
-		String terms = ac.getRequest().getParameter("conditions");
+		String term = ac.getRequest().getParameter("condition");
 		String location = ac.getRequest().getParameter("location");
 		
 		long positiveCount = 0;
 		long neutralCount = 0;
 		long negativeCount = 0;
 		
-		ArrayList<String> conditions = new ArrayList<String>(Arrays.asList(terms.split(",")));
 
 		PrintWriter writer = null; 
 		
@@ -66,19 +63,19 @@ public class SentimentAsyncService implements Runnable {
 			logger.error("could not write SSE {}", e.getMessage());
 		}
 		
-		for(String condition : conditions) {
-			logger.debug("Requested condition {} and location {}", condition, location);
+		if(!term.equals("") && !location.equals("")) {
+			logger.debug("Requested condition {} and location {}", term, location);
 			InsightsTwitter twitter = new InsightsTwitter();
 			
-			Sentiment sentiment = twitter.getSentimentCount(condition, location, "positive");
+			Sentiment sentiment = twitter.getSentimentCount(term, location, "positive");
 			logger.debug("Positive sentiment {}", sentiment.getCount());
 			positiveCount += sentiment.getCount();
 			
-			sentiment = twitter.getSentimentCount(condition, location, "negative");
+			sentiment = twitter.getSentimentCount(term, location, "negative");
 			logger.debug("Negative sentiment {}", sentiment.getCount());
 			negativeCount += sentiment.getCount();
 			
-			sentiment = twitter.getSentimentCount(condition, location, "neutral");
+			sentiment = twitter.getSentimentCount(term, location, "neutral");
 			logger.debug("Neutral sentiment {}", sentiment.getCount());
 			neutralCount += sentiment.getCount();
 		}
