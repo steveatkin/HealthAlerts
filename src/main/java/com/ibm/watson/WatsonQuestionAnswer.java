@@ -97,9 +97,9 @@ public class WatsonQuestionAnswer {
     }
 
 	public WatsonQuestionAnswer() {
-		
+
 	}
-	
+
 	private List<Map<String,String>> formatAnswers(String resultJson) {
 		List<Map<String,String>> ret = new ArrayList<Map<String,String>>();
 		if(resultJson != null) {
@@ -131,18 +131,18 @@ public class WatsonQuestionAnswer {
 
 	public List<Map<String, String>> getAnswers(String questionText, String dataset) {
 		List<Map<String, String>> answers = null;
-		
+
 		JSONObject questionJson = new JSONObject();
 		questionJson.put("questionText",questionText);
 		JSONObject evidenceRequest = new JSONObject();
 		evidenceRequest.put("items",5);
 		questionJson.put("evidenceRequest",evidenceRequest);
-		
+
 		JSONObject postData = new JSONObject();
     	postData.put("question",questionJson);
-		
+
     	logger.debug("Watson question: {}", questionText);
-		
+
 		try {
 			Executor executor = Executor.newInstance();
 			URI serviceURI = new URI(baseURLQuestion + "/v1/question/"+dataset).normalize();
@@ -150,16 +150,16 @@ public class WatsonQuestionAnswer {
 			String answersJson = executor.execute(Request.Post(serviceURI)
 					.addHeader("Authorization", "Basic "+ Base64.encodeBase64String(auth.getBytes()))
 				    .addHeader("Accept", "application/json")
-				    .addHeader("X-SyncTimeout", "30")
+				    .addHeader("X-SyncTimeout", "60")
 				    .bodyString(postData.toString(), ContentType.APPLICATION_JSON)
 				    ).returnContent().asString();
-	    	
+
 			answers = formatAnswers(answersJson);
 			}
 			catch(Exception e) {
 				logger.error("Watson question error: {}", e.getMessage());
 			}
-		
+
 		return answers;
 	}
 
