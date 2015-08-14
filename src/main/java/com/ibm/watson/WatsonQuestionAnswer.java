@@ -125,7 +125,7 @@ public class WatsonQuestionAnswer {
 					}
 				}
 			} catch (IOException e) {
-				System.out.println("Error parsing the response {} ", e.getMessage());
+				System.out.println("Error parsing the response {} " + e.getMessage());
 			}
 		}
 		return ret;
@@ -143,7 +143,7 @@ public class WatsonQuestionAnswer {
 		JSONObject postData = new JSONObject();
     	postData.put("question",questionJson);
 
-    	System.out.println("Watson question: {}", questionText);
+    	System.out.println("Watson question: {}"+ questionText);
 
 		try {
 			Executor executor = Executor.newInstance();
@@ -159,7 +159,7 @@ public class WatsonQuestionAnswer {
 			answers = formatAnswers(answersJson);
 			}
 			catch(Exception e) {
-				System.out.println("Watson question error: {}", e.getMessage());
+				System.out.println("Watson question error: {}" + e.getMessage());
 			}
 
 		return answers;
