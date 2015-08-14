@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 package com.ibm.watson;
 
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -57,22 +58,22 @@ public class WatsonQuestionAnswer {
 	}
 
 	private static void processVCAP_Services() {
-		System.out.println("Processing VCAP_SERVICES");
+		logger.info("Processing VCAP_SERVICES for Watson Q&A");
 
 		JSONObject sysEnv = getVcapServices();
 
-		System.out.println("Looking for: "+ questionService);
+		logger.info("Looking for: "+ questionService);
 
-      if (false) {
+      if (sysEnv != null && sysEnv.containsKey(questionService)) {
       	JSONArray services = (JSONArray)sysEnv.get(questionService);
 				JSONObject service = (JSONObject)services.get(0);
 				JSONObject credentials = (JSONObject)service.get("credentials");
 				baseURLQuestion = (String)credentials.get("url");
 				usernameQuestion = (String)credentials.get("username");
 				passwordQuestion = (String)credentials.get("password");
-				System.out.println("baseURL  = "+baseURLQuestion);
-				System.out.println("username   = "+usernameQuestion);
-				System.out.println("password = "+passwordQuestion);
+				logger.info("baseURL  = "+baseURLQuestion);
+				logger.info("username   = "+usernameQuestion);
+				logger.info("password = "+passwordQuestion);
     	}
 			else {
 				logger.info("Attempting to use locally defined service credentials watson question");
@@ -97,9 +98,9 @@ public class WatsonQuestionAnswer {
     }
 
 	public WatsonQuestionAnswer() {
-
+		
 	}
-
+	
 	private List<Map<String,String>> formatAnswers(String resultJson) {
 		List<Map<String,String>> ret = new ArrayList<Map<String,String>>();
 		if(resultJson != null) {
@@ -119,13 +120,11 @@ public class WatsonQuestionAnswer {
 						map.put("confidence",  Double.toString(p) + "%");
 						map.put("text", (String)answer.get("text"));
 
-						System.out.println("Answer: " + (String)answer.get("text"));
-
 						ret.add(map);
 					}
 				}
 			} catch (IOException e) {
-				System.out.println("Error parsing the response {} " + e.getMessage());
+				logger.error("Error parsing the response {} ", e.getMessage());
 			}
 		}
 		return ret;
@@ -133,18 +132,18 @@ public class WatsonQuestionAnswer {
 
 	public List<Map<String, String>> getAnswers(String questionText, String dataset) {
 		List<Map<String, String>> answers = null;
-
+		
 		JSONObject questionJson = new JSONObject();
 		questionJson.put("questionText",questionText);
 		JSONObject evidenceRequest = new JSONObject();
 		evidenceRequest.put("items",5);
 		questionJson.put("evidenceRequest",evidenceRequest);
-
+		
 		JSONObject postData = new JSONObject();
     	postData.put("question",questionJson);
-
-    	System.out.println("Watson question: {}"+ questionText);
-
+		
+    	logger.info("Watson question: {}", questionText);
+		
 		try {
 			Executor executor = Executor.newInstance();
 			URI serviceURI = new URI(baseURLQuestion + "/v1/question/"+dataset).normalize();
@@ -155,13 +154,13 @@ public class WatsonQuestionAnswer {
 				    .addHeader("X-SyncTimeout", "60")
 				    .bodyString(postData.toString(), ContentType.APPLICATION_JSON)
 				    ).returnContent().asString();
-
+	    	
 			answers = formatAnswers(answersJson);
 			}
 			catch(Exception e) {
-				System.out.println("Watson question error: {}" + e.getMessage());
+				logger.info("Watson question error: {}", e.getMessage());
 			}
-
+		
 		return answers;
 	}
 
