@@ -57,11 +57,11 @@ public class WatsonQuestionAnswer {
 	}
 
 	private static void processVCAP_Services() {
-		logger.info("Processing VCAP_SERVICES");
+		System.out.println("Processing VCAP_SERVICES");
 
 		JSONObject sysEnv = getVcapServices();
 
-		logger.info("Looking for: "+ questionService);
+		System.out.println("Looking for: "+ questionService);
 
       if (sysEnv != null && sysEnv.containsKey(questionService)) {
       	JSONArray services = (JSONArray)sysEnv.get(questionService);
@@ -70,9 +70,9 @@ public class WatsonQuestionAnswer {
 				baseURLQuestion = (String)credentials.get("url");
 				usernameQuestion = (String)credentials.get("username");
 				passwordQuestion = (String)credentials.get("password");
-				logger.info("baseURL  = "+baseURLQuestion);
-				logger.info("username   = "+usernameQuestion);
-				logger.info("password = "+passwordQuestion);
+				System.out.println("baseURL  = "+baseURLQuestion);
+				System.out.println("username   = "+usernameQuestion);
+				System.out.println("password = "+passwordQuestion);
     	}
 			else {
 				logger.info("Attempting to use locally defined service credentials watson question");
@@ -119,11 +119,13 @@ public class WatsonQuestionAnswer {
 						map.put("confidence",  Double.toString(p) + "%");
 						map.put("text", (String)answer.get("text"));
 
+						System.out.println("Answer: " + (String)answer.get("text"));
+
 						ret.add(map);
 					}
 				}
 			} catch (IOException e) {
-				logger.error("Error parsing the response {} ", e.getMessage());
+				System.out.println("Error parsing the response {} ", e.getMessage());
 			}
 		}
 		return ret;
@@ -141,7 +143,7 @@ public class WatsonQuestionAnswer {
 		JSONObject postData = new JSONObject();
     	postData.put("question",questionJson);
 
-    	logger.debug("Watson question: {}", questionText);
+    	System.out.println("Watson question: {}", questionText);
 
 		try {
 			Executor executor = Executor.newInstance();
@@ -157,7 +159,7 @@ public class WatsonQuestionAnswer {
 			answers = formatAnswers(answersJson);
 			}
 			catch(Exception e) {
-				logger.error("Watson question error: {}", e.getMessage());
+				System.out.println("Watson question error: {}", e.getMessage());
 			}
 
 		return answers;
