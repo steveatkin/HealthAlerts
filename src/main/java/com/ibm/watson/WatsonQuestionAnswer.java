@@ -63,7 +63,7 @@ public class WatsonQuestionAnswer {
 
 		System.out.println("Looking for: "+ questionService);
 
-      if (sysEnv != null && sysEnv.containsKey(questionService)) {
+      if (false) {
       	JSONArray services = (JSONArray)sysEnv.get(questionService);
 				JSONObject service = (JSONObject)services.get(0);
 				JSONObject credentials = (JSONObject)service.get("credentials");
