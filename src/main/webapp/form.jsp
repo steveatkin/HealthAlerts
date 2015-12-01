@@ -29,9 +29,9 @@ THE SOFTWARE.
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.net.URL" %>
 <%@ page import="java.util.ResourceBundle.Control" %>
-<%@ page import="com.ibm.gaas.CloudResourceBundle" %>
-<%@ page import="com.ibm.gaas.ServiceAccount" %>
-<%@ page import="com.ibm.gaas.CloudResourceBundleControl" %>
+<%@ page import="com.ibm.gaas.client.ServiceAccount" %>
+<%@ page import="com.ibm.gaas.client.rb.CloudResourceBundle" %>
+<%@ page import="com.ibm.gaas.client.rb.CloudResourceBundleControl" %>
 <%@ page import="com.ibm.globalization.Globalization" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 
@@ -121,7 +121,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
     <div class="form-group">
       <select class="selectpicker form-control" data-width="auto" id="locationList" name="locationList" title='<%=res.getString("select_list")%>'>
         <option data-hidden="true"></option>
-        
+
       </select>
 
     </div>
@@ -142,7 +142,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
                           </div>
                           <div id="accordion-item" class="panel-collapse collapse" data-station="" data-number=0>
                   <div class="panel-body">
-                  
+
                     <div class="row-fluid">
                       <div class="col-md-12 column-white">
                         <span class="label label-primary"><%=res.getString("health_issues")%></span>
@@ -150,7 +150,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
                         </table>
                       </div>
                     </div>
-                  
+
                     <div class="row-fluid">
                   	<div class="col-md-12 column-white">
                         <span class="label label-primary"><%=res.getString("medline")%></span>
@@ -158,7 +158,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
                         </table>
                       </div>
                     </div>
-                  
+
                   	<div class="row-fluid">
                   	<div class="col-md-12 column-white">
                         <span class="label label-primary"><%=res.getString("background")%></span>
@@ -166,7 +166,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
                         </table>
                       </div>
                     </div>
-                    
+
                     <div class="row-fluid">
                   	<div class="col-md-12 column-white">
                         <span class="label label-primary"><%=res.getString("news")%></span>
@@ -232,7 +232,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
   </script>
 
   <script>
-  
+
   function linkFormatter(value, row, index) {
   	return '<a target="_blank" href="' + value + '">' + value + '</a>';
   }
@@ -247,17 +247,17 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
     }
     return span;
   }
-  
+
   function setupQuestionAnswer(IdNum) {
   	// Remove all the entries from the table
     var tableId = '#table-background' + IdNum;
     var enable = $('#translation').val();
-    
+
     var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
    	var healthAlert = JSON.parse(jsonData);
    	var conditions = healthAlert.healthConditions;
-   	
-   	
+
+
    	$(tableId).bootstrapTable({
       	columns: [
       		{
@@ -272,18 +272,18 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
      });
 
      $(tableId).bootstrapTable('load', []);
-   	
-   	
+
+
    	// Just grab the first condition
    	if(conditions.length >0) {
    		var source = new EventSource('Question?condition=' + conditions[0].name + '&enable=' + enable);
-   		
+
    		source.onmessage = function(event) {
         	var answer = JSON.parse(event.data);
-        
+
         	$(tableId).bootstrapTable('append', answer);
       	};
-      	
+
       	source.onerror = function(event) {
       		alert('<%=StringEscapeUtils.escapeJavaScript(res.getString("closed"))%>');
       	};
@@ -292,7 +292,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
       		source.close();
       	},false);
    	}
-    
+
   }
 
   function setupAlerts(IdNum) {
@@ -319,12 +319,12 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
      $(tableId).bootstrapTable('load', []);
 
      var enable = $('#translation').val();
-     
+
      for (var i = 0; i < conditions.length; ++i) {
         $(tableId).bootstrapTable('append', conditions[i]);
      }
   }
-  
+
   function setupMedline(IdNum) {
   	// Remove all the entries from the table
     var tableId = '#table-medline' + IdNum;
@@ -348,7 +348,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
      });
 
      $(tableId).bootstrapTable('load', []);
-     
+
      $.ajax({
         	url: 'Terms',
       		type: 'GET',
@@ -363,7 +363,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
         	dataType: 'json',
         	timeout: 100000,
       	});
-     
+
   }
 
   function setupNews(IdNum) {
@@ -388,9 +388,9 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
      });
 
      $(tableId).bootstrapTable('load', []);
-     
+
      var location = $('#locationList').val();
-     
+
      $.ajax({
         	url: 'News',
       		type: 'GET',
@@ -407,7 +407,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
         	dataType: 'json',
         	timeout: 100000,
       	});
-     
+
   }
 
 
@@ -448,7 +448,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
 
       source.onmessage = function(event) {
         var tweet = JSON.parse(event.data);
-        
+
         $(tableId).bootstrapTable('append', [{
         		screenName: tweet.screenName,
         		tweet: tweet.tweet.message,
@@ -533,10 +533,10 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
 
     // Initialize the select picker list
     $('.selectpicker').selectpicker();
-    
+
     // Add the select list choice
     $('#locationList').append(new Option('<%=res.getString("select_list")%>', 'select', true, true));
-    
+
     $.ajax({
         	url: 'Locations',
       		type: 'GET',
@@ -559,17 +559,17 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
         	complete: function() {
         		// Hide the loading gif
         		$('#ajax_loader').hide();
-        		
+
         		// Extract the value of the first option.
 				//var sVal = $('select[name=locationList] option:first').val();
         		//$('select[name=locationList]').val(sVal);
-        		
+
         		$('#locationList').selectpicker('refresh');
         	},
         	dataType: 'json',
         	timeout: 100000,
       	});
-      	
+
     // Find the base template panel for the accordion
     var $template = $(".template");
 
@@ -579,7 +579,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
 
       // If we have a selected location
       if(location !== "") {
-        
+
         // remove all the old alerts
       	$('#accordion').empty();
 
@@ -603,9 +603,9 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
     				$newPanel.find(".collapse").removeClass("in");
 
     				$newPanel.find(".accordion-toggle").attr("id",  "anchor" + (i));
-    				
+
     				var date = new Date(data[i].date).toLocaleDateString();
-        			
+
       				$newPanel.find(".accordion-toggle").attr("href",  "#accordion-item" + (i))
       					.text(data[i].title + " \u2014 " + date);
       				$newPanel.find(".panel-collapse").data("number", i);

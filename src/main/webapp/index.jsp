@@ -28,9 +28,9 @@ THE SOFTWARE.
 <%@ page import="java.util.ResourceBundle"%>
 <%@ page import="java.net.URL" %>
 <%@ page import="java.util.ResourceBundle.Control" %>
-<%@ page import="com.ibm.gaas.ServiceAccount" %>
-<%@ page import="com.ibm.gaas.CloudResourceBundle" %>
-<%@ page import="com.ibm.gaas.CloudResourceBundleControl" %>
+<%@ page import="com.ibm.gaas.client.ServiceAccount" %>
+<%@ page import="com.ibm.gaas.client.rb.CloudResourceBundle" %>
+<%@ page import="com.ibm.gaas.client.rb.CloudResourceBundleControl" %>
 <%@ page import="com.ibm.globalization.Globalization" %>
 
 
