@@ -159,14 +159,6 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
                       </div>
                     </div>
 
-                  	<div class="row-fluid">
-                  	<div class="col-md-12 column-white">
-                        <span class="label label-primary"><%=res.getString("background")%></span>
-                             <table data-toggle="table" class="table" id="table-background">
-                        </table>
-                      </div>
-                    </div>
-
                     <div class="row-fluid">
                   	<div class="col-md-12 column-white">
                         <span class="label label-primary"><%=res.getString("news")%></span>
@@ -248,52 +240,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
     return span;
   }
 
-  function setupQuestionAnswer(IdNum) {
-  	// Remove all the entries from the table
-    var tableId = '#table-background' + IdNum;
-    var enable = $('#translation').val();
 
-    var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
-   	var healthAlert = JSON.parse(jsonData);
-   	var conditions = healthAlert.healthConditions;
-
-
-   	$(tableId).bootstrapTable({
-      	columns: [
-      		{
-      			field: "question",
-      			title: "<%=res.getString("question")%>"
-      		},
-      		{
-      			field: "answer",
-      			title: "<%=res.getString("answer")%>"
-      		}
-      	]
-     });
-
-     $(tableId).bootstrapTable('load', []);
-
-
-   	// Just grab the first condition
-   	if(conditions.length >0) {
-   		var source = new EventSource('Question?condition=' + conditions[0].name + '&enable=' + enable);
-
-   		source.onmessage = function(event) {
-        	var answer = JSON.parse(event.data);
-
-        	$(tableId).bootstrapTable('append', answer);
-      	};
-
-      	source.onerror = function(event) {
-      		alert('<%=StringEscapeUtils.escapeJavaScript(res.getString("closed"))%>');
-      	};
-
-      	source.addEventListener('finished', function(event) {
-      		source.close();
-      	},false);
-   	}
-
-  }
 
   function setupAlerts(IdNum) {
   	// Remove all the entries from the table
@@ -435,7 +382,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
 
       $(tableId).bootstrapTable('load', []);
 
-	  var enable = $('#translation').val();
+	    var enable = $('#translation').val();
 
       var jsonData = $('#accordion-item' + IdNum).data('healthAlert');
       var healthAlert = JSON.parse(jsonData);
@@ -528,7 +475,6 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
       setupSentimentEventSource(IdNum);
       setupMedline(IdNum);
       setupNews(IdNum);
-      setupQuestionAnswer(IdNum);
     });
 
     // Initialize the select picker list
@@ -617,7 +563,6 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
 					$newPanel.find("#table-conditions").attr("id", "table-conditions" + (i));
 					$newPanel.find("#table-news").attr("id", "table-news" + (i));
 					$newPanel.find("#table-medline").attr("id", "table-medline" + (i));
-					$newPanel.find("#table-background").attr("id", "table-background" + (i));
 
       				var value = JSON.stringify(data[i]);
         		    $newPanel.find('#accordion-item' + (i)).data('healthAlert', value);
