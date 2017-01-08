@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.servlet.AsyncContext;
 
@@ -54,11 +56,19 @@ public class AlchemyAsyncService implements Runnable {
 	@Override
 	  public void run() {
 		String reviewURL = ac.getRequest().getParameter("url");
+		URL parsedURL = null;
 		boolean translate = Boolean.parseBoolean(ac.getRequest().getParameter("enable"));
 
 		logger.debug("Requested review url {}", reviewURL);
 
-		Alchemy alchemy = new Alchemy(reviewURL);
+		try {
+			parsedURL = new URL(reviewURL);
+		}
+		catch(MalformedURLException e) {
+			logger.error("could not parse URL {}", e.getMessage());
+		}
+
+		Alchemy alchemy = new Alchemy(parsedURL);
 		ArrayList<Concept> concepts = alchemy.getConcepts();
 
 		logger.debug("Identfied concepts {}", concepts.toString());

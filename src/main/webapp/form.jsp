@@ -174,6 +174,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
                       </div>
                     </div>
 
+          <!--
                     <div class="row-fluid">
                       <div class="col-md-12 column-white">
                         <span class="label label-primary"><%=res.getString("sentiment")%></span>
@@ -186,6 +187,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
                         </p>
                       </div>
                     </div>
+          -->
 
                   </div>
                 </div>
@@ -227,19 +229,6 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
   function linkFormatter(value, row, index) {
   	return '<a target="_blank" href="' + value + '">' + value + '</a>';
   }
-
-  function polarityFormatter(value) {
-  	var span = "";
-
-    if (value === 'Positive') {
-    	span = "<span class='badge badge-positive'>+</span>";
-    } else if (value === "Negative") {
-        span = "<span class='badge badge-negative'>-</span>";
-    }
-    return span;
-  }
-
-
 
   function setupAlerts(IdNum) {
   	// Remove all the entries from the table
@@ -356,6 +345,21 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
 
   }
 
+  function polarityFormatter(value) {
+  	var span = "";
+
+    if (value === "POSITIVE") {
+    	span = "<span class='badge badge-positive'>+</span>";
+    } else if (value === "NEGATIVE") {
+        span = "<span class='badge badge-negative'>-</span>";
+    }
+    else {
+        span = "<span class='badge badge-neutral'>?</span>";
+    }
+
+    return span;
+  }
+
 
   function setupTwitterEventSource(IdNum) {
     if (typeof(EventSource) !== 'undefined') {
@@ -372,6 +376,11 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
       			field: "tweet",
       			title: "<%=res.getString("message_table")%>"
       		},
+          {
+            field: "sentiment",
+            title: "<%=res.getString("sentiment_label")%>",
+            formatter: "polarityFormatter"
+          },
       		{
       			field: "date",
       			title: "<%=res.getString("date")%>"
@@ -398,6 +407,7 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
         $(tableId).bootstrapTable('append', [{
         		screenName: tweet.screenName,
         		tweet: tweet.tweet.message,
+            sentiment: tweet.tweet.sentiment,
         		date: tweet.tweet.date}]);
       };
 
@@ -471,7 +481,8 @@ ResourceBundle res = ResourceBundle.getBundle("com.ibm.health", request.getLocal
       var IdNum = $('#' + e.target.id).data('number');
       setupAlerts(IdNum);
       setupTwitterEventSource(IdNum);
-      setupSentimentEventSource(IdNum);
+      // Remove call to support IBM Insights for Twitter
+      //setupSentimentEventSource(IdNum);
       setupMedline(IdNum);
       setupNews(IdNum);
     });

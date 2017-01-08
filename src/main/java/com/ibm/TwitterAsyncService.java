@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.ibm.json.java.JSONObject;
 import com.ibm.watson.WatsonTranslate;
+import com.ibm.alchemy.*;
 
 import twitter4j.*;
 
@@ -53,6 +54,8 @@ public class TwitterAsyncService implements Runnable{
 	    	try {
 	    		// Just get the first page of results to avoid exceeding the Twitter rate limit
 	    		QueryResult result = twitter.search(query);
+
+				Alchemy alchemy = new Alchemy();
 	        	
 	    		List<Status> tweets = result.getTweets();
 	        	
@@ -67,9 +70,11 @@ public class TwitterAsyncService implements Runnable{
 	    			if(translate) {
 	    				String message = watson.translate(tweetMessage.getText());
 	    				tweet.put("message", message);
+						tweet.put("sentiment", alchemy.getSentiment(message));
 	    			}
 	    			else {
 	    				tweet.put("message", tweetMessage.getText());
+						tweet.put("sentiment", alchemy.getSentiment(tweetMessage.getText()));
 	    			}
 	        		
 	    			tweet.put("date", dateFormatter.format(tweetMessage.getCreatedAt()));
